@@ -95,7 +95,7 @@ export default function AddProductTabs({
       </div>
 
       {/* Footer */}
-      <div className='bg-background sticky bottom-0 left-0 z-20 border-t'>
+      <div className='bg-background sticky bottom-0 left-0 z-20 rounded-lg border-t'>
         {/* Progress bar */}
         <div className='bg-muted/30 px-6 py-3'>
           <div className='flex items-center justify-center space-x-2'>
@@ -114,7 +114,7 @@ export default function AddProductTabs({
         </div>
 
         {/* Footer buttons */}
-        <div className='bg-background flex justify-between px-6 py-4'>
+        <div className='flex justify-between rounded-lg bg-gray-50 px-6 py-4 dark:bg-zinc-900'>
           {/* Back button */}
           <button
             type='button'

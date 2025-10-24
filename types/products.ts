@@ -3,8 +3,11 @@ import { z } from 'zod';
 // Product creation form schema
 export const createProductSchema = z.object({
   // Basic Info
-  product_name: z.string().min(1, 'Product name is required'),
-  product_sku: z.string().min(1, 'Product SKU is required'),
+  product_name: z.string().trim().min(1, 'Product name is required'),
+  product_sku: z
+    .string()
+    .min(1, 'Product SKU is required')
+    .transform(val => val.toUpperCase()),
   product_category: z.string().min(1, 'Product category is required'),
   description: z.string().optional(),
 
@@ -19,7 +22,7 @@ export const createProductSchema = z.object({
 
 export type CreateProductFormData = z.infer<typeof createProductSchema>;
 
-// Product type based on your data structure
+// Product type based on data structure
 export interface Product {
   id: string;
   createdAt: number;

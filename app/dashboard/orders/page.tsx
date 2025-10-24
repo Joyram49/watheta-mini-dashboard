@@ -1,11 +1,9 @@
-import React from 'react';
+import { Package, ShoppingCart, TrendingUp, Users } from 'lucide-react';
 
-import { ShoppingCart, Package, Users, TrendingUp } from 'lucide-react';
-
+import { PageHeader } from '@/components/shared/PageHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PageHeader } from '@/components/ui/page-header';
 
 export default function OrdersPage() {
   // Mock data for demonstration

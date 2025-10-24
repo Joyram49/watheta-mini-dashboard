@@ -1,224 +1,273 @@
 'use client';
 
-import { Filter, MoreHorizontal, Package, Plus, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
+
+import { Package, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { Badge } from '@/components/ui/badge';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { PageHeader } from '@/components/ui/page-header';
+import { useProducts } from '@/lib/hooks/useProducts';
+import { Product } from '@/types/products';
+
+import { DeleteProductModal } from './_components/DeleteProductModal';
+import { EditProductModal } from './_components/EditProductModal';
+import { ProductsDataTable } from './_components/ProductsDataTable';
+import { ProductsFilters } from './_components/ProductsFilters';
+import { ViewProductModal } from './_components/ViewProductModal';
 
 export default function ProductsPage() {
   const router = useRouter();
-  // Mock data for demonstration
-  const stats = [
-    {
-      title: 'Total Products',
-      value: '1,234',
-      change: '+12%',
-      changeType: 'positive' as const,
-      icon: Package,
-    },
-    {
-      title: 'Active Products',
-      value: '1,180',
-      change: '+8%',
-      changeType: 'positive' as const,
-      icon: Package,
-    },
-    {
-      title: 'Out of Stock',
-      value: '54',
-      change: '-3%',
-      changeType: 'negative' as const,
-      icon: Package,
-    },
-    {
-      title: 'Low Stock',
-      value: '23',
-      change: '+2%',
-      changeType: 'positive' as const,
-      icon: Package,
-    },
-  ];
+  const { data: products = [], isLoading, error } = useProducts();
+  const [filters, setFilters] = useState({
+    category: '',
+    status: '',
+    priceRange: [0, 1000] as [number, number],
+  });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null
+  );
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewProductId, setViewProductId] = useState<string | null>(null);
 
-  const products = [
-    {
-      id: 'PROD-001',
-      name: 'Premium Widget',
-      category: 'Electronics',
-      price: '$299.99',
-      stock: 45,
-      status: 'active',
-      image: '/placeholder-product.jpg',
-    },
-    {
-      id: 'PROD-002',
-      name: 'Basic Widget',
-      category: 'Electronics',
-      price: '$99.99',
-      stock: 0,
-      status: 'out_of_stock',
-      image: '/placeholder-product.jpg',
-    },
-    {
-      id: 'PROD-003',
-      name: 'Deluxe Widget',
-      category: 'Electronics',
-      price: '$499.99',
-      stock: 12,
-      status: 'low_stock',
-      image: '/placeholder-product.jpg',
-    },
-    {
-      id: 'PROD-004',
-      name: 'Standard Widget',
-      category: 'Electronics',
-      price: '$199.99',
-      stock: 78,
-      status: 'active',
-      image: '/placeholder-product.jpg',
-    },
-  ];
+  // Filter products based on current filters
+  const filteredProducts = useMemo(() => {
+    return products.filter((product: Product) => {
+      const matchesCategory =
+        !filters.category || product.product_category === filters.category;
+      const matchesStatus =
+        !filters.status || product.status === filters.status;
+      const matchesPriceRange =
+        product.price >= filters.priceRange[0] &&
+        product.price <= filters.priceRange[1];
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return (
-          <Badge variant='default' className='bg-green-100 text-green-800'>
-            Active
-          </Badge>
-        );
-      case 'out_of_stock':
-        return <Badge variant='destructive'>Out of Stock</Badge>;
-      case 'low_stock':
-        return (
-          <Badge variant='default' className='bg-yellow-100 text-yellow-800'>
-            Low Stock
-          </Badge>
-        );
-      default:
-        return <Badge variant='secondary'>{status}</Badge>;
-    }
+      return matchesCategory && matchesStatus && matchesPriceRange;
+    });
+  }, [products, filters]);
+
+  // Extract unique categories and statuses for filters
+  const categories = useMemo(() => {
+    const uniqueCategories = [
+      ...new Set(products.map((p: Product) => p.product_category)),
+    ];
+    return uniqueCategories.sort();
+  }, [products]);
+
+  const statuses = useMemo(() => {
+    const uniqueStatuses = [...new Set(products.map((p: Product) => p.status))];
+    return uniqueStatuses.sort();
+  }, [products]);
+
+  const maxPrice = useMemo(() => {
+    return Math.max(...products.map((p: Product) => p.price), 1000);
+  }, [products]);
+
+  const handleEditProduct = (product: Product) => {
+    setSelectedProductId(product.id);
+    setIsEditModalOpen(true);
   };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedProductId(null);
+  };
+
+  const handleDeleteProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleViewProduct = (product: Product) => {
+    setViewProductId(product.id);
+    setIsViewModalOpen(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setIsViewModalOpen(false);
+    setViewProductId(null);
+  };
+
+  const handleFiltersChange = (newFilters: typeof filters) => {
+    setFilters(newFilters);
+  };
+
+  if (error) {
+    return (
+      <div className='space-y-6'>
+        <PageHeader
+          title='Products'
+          description='Manage your product inventory'
+        />
+        <Card>
+          <CardContent className='flex flex-col items-center justify-center py-12'>
+            <Package className='text-muted-foreground mb-4 h-12 w-12' />
+            <h3 className='mb-2 text-lg font-semibold'>
+              Failed to load products
+            </h3>
+            <p className='text-muted-foreground mb-4 text-center'>
+              There was an error loading your products. Please try again.
+            </p>
+            <Button onClick={() => window.location.reload()}>Try Again</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className='space-y-6'>
-      {/* Header */}
-      <PageHeader
-        title='Products'
-        description='Manage your product inventory and catalog'
-      >
+      <PageHeader title='Products' description='Manage your product inventory'>
         <Button onClick={() => router.push('/dashboard/products/create')}>
           <Plus className='mr-2 h-4 w-4' />
           Add Product
         </Button>
       </PageHeader>
 
-      {/* Stats Grid */}
+      {/* Stats Cards */}
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-        {stats.map(stat => (
-          <Card key={stat.title} className='transition-shadow hover:shadow-md'>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-muted-foreground text-sm font-medium'>
-                {stat.title}
-              </CardTitle>
-              <stat.icon className='text-muted-foreground h-4 w-4' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold'>{stat.value}</div>
-              <p className='text-muted-foreground text-xs'>
-                <span
-                  className={
-                    stat.changeType === 'positive'
-                      ? 'text-green-600'
-                      : 'text-red-600'
-                  }
-                >
-                  {stat.change}
-                </span>{' '}
-                from last month
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>
+              Total Products
+            </CardTitle>
+            <Package className='text-muted-foreground h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>{products.length}</div>
+            <p className='text-muted-foreground text-xs'>
+              {filteredProducts.length} after filtering
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>
+              Active Products
+            </CardTitle>
+            <div className='h-4 w-4 rounded-full bg-green-500' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {products.filter((p: Product) => p.status === 'active').length}
+            </div>
+            <p className='text-muted-foreground text-xs'>Currently active</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Low Stock</CardTitle>
+            <div className='h-4 w-4 rounded-full bg-yellow-500' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {
+                products.filter((p: Product) => p.stock < 10 && p.stock > 0)
+                  .length
+              }
+            </div>
+            <p className='text-muted-foreground text-xs'>Need restocking</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Out of Stock</CardTitle>
+            <div className='h-4 w-4 rounded-full bg-red-500' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {products.filter((p: Product) => p.stock === 0).length}
+            </div>
+            <p className='text-muted-foreground text-xs'>No inventory</p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Search and Filters */}
+      {/* Filters */}
+      <ProductsFilters
+        onFiltersChange={handleFiltersChange}
+        categories={categories}
+        statuses={statuses}
+        maxPrice={maxPrice}
+      />
+
+      {/* Products Table */}
       <Card>
         <CardHeader>
-          <div className='flex items-center justify-between'>
-            <CardTitle>Product Inventory</CardTitle>
-            <div className='flex items-center space-x-2'>
-              <div className='relative'>
-                <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
-                <Input
-                  placeholder='Search products...'
-                  className='w-64 pl-10'
-                />
-              </div>
-              <Button variant='outline' size='sm'>
-                <Filter className='mr-2 h-4 w-4' />
-                Filter
-              </Button>
-            </div>
-          </div>
+          <CardTitle>Products</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className='space-y-4'>
-            {products.map(product => (
-              <div
-                key={product.id}
-                className='hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors'
-              >
-                <div className='flex items-center space-x-4'>
-                  <div className='bg-muted flex h-12 w-12 items-center justify-center rounded-lg'>
-                    <Package className='text-muted-foreground h-6 w-6' />
-                  </div>
-                  <div className='min-w-0 flex-1'>
-                    <p className='text-foreground text-sm font-medium'>
-                      {product.name}
-                    </p>
-                    <p className='text-muted-foreground text-sm'>
-                      {product.category} • {product.id}
-                    </p>
-                  </div>
-                </div>
-                <div className='flex items-center space-x-4'>
-                  <div className='text-right'>
-                    <p className='text-sm font-medium'>{product.price}</p>
-                    <p className='text-muted-foreground text-xs'>
-                      {product.stock} in stock
-                    </p>
-                  </div>
-                  {getStatusBadge(product.status)}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant='ghost' size='sm'>
-                        <MoreHorizontal className='h-4 w-4' />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align='end'>
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                      <DropdownMenuItem className='text-destructive'>
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+        <div className='p-6'>
+          {isLoading ? (
+            <div className='flex items-center justify-center py-12'>
+              <div className='text-center'>
+                <div className='border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2'></div>
+                <p className='text-muted-foreground'>Loading products...</p>
               </div>
-            ))}
-          </div>
-        </CardContent>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className='flex flex-col items-center justify-center py-12'>
+              <Package className='text-muted-foreground mb-4 h-12 w-12' />
+              <h3 className='mb-2 text-lg font-semibold'>
+                {products.length === 0
+                  ? 'No products yet'
+                  : 'No products match your filters'}
+              </h3>
+              <p className='text-muted-foreground mb-4 text-center'>
+                {products.length === 0
+                  ? 'Get started by adding your first product to your inventory.'
+                  : 'Try adjusting your filters to see more products.'}
+              </p>
+              {products.length === 0 && (
+                <Button
+                  onClick={() => router.push('/dashboard/products/create')}
+                >
+                  <Plus className='mr-2 h-4 w-4' />
+                  Add Your First Product
+                </Button>
+              )}
+            </div>
+          ) : (
+            <ProductsDataTable
+              data={filteredProducts}
+              onEdit={handleEditProduct}
+              onDelete={handleDeleteProduct}
+              onView={handleViewProduct}
+            />
+          )}
+        </div>
       </Card>
+
+      {/* Edit Product Modal */}
+      <EditProductModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        productId={selectedProductId}
+      />
+
+      {/* Delete Product Modal */}
+      <DeleteProductModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        product={selectedProduct}
+      />
+
+      {/* View Product Modal */}
+      <ViewProductModal
+        isOpen={isViewModalOpen}
+        onClose={handleCloseViewModal}
+        productId={viewProductId}
+      />
     </div>
   );
 }

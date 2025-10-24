@@ -76,10 +76,47 @@ export default function CreateProductContainer() {
         'product_sku',
         'product_category',
       ]);
-      if (isValid) {
-        goNext();
-      } else {
+
+      if (!isValid) {
         toast.error('Please fill in all required fields');
+        return;
+      }
+
+      const { product_name } = methods.getValues();
+      try {
+        const res = await fetch(
+          `https://68f9797cef8b2e621e7c2bea.mockapi.io/api/v1/products?product_name=${encodeURIComponent(
+            product_name
+          )}`
+        );
+
+        // 🔹 If no match, MockAPI sends 404 — treat that as “no duplicates found”
+        if (res.status === 404) {
+          goNext();
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          methods.setError('product_name', {
+            type: 'manual',
+            message: 'Product name must be unique',
+          });
+          toast.error(
+            `'${product_name}' already exists. Please rename the product and try again.`
+          );
+          return;
+        }
+
+        goNext();
+      } catch (err) {
+        console.error('Error checking product name:', err);
+        toast.error('Unable to verify product name. Please try again.');
       }
     } else if (step === 1) {
       // Validate inventory
