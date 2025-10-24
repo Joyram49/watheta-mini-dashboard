@@ -106,6 +106,7 @@ export function ProductsFilters({
           <CardHeader>
             <CardTitle className='text-lg'>Filter Products</CardTitle>
           </CardHeader>
+
           <CardContent className='space-y-6'>
             {/* Category Filter */}
             <div className='space-y-2'>
@@ -149,11 +150,52 @@ export function ProductsFilters({
               </Select>
             </div>
 
-            {/* Price Range Filter */}
+            {/* Price Range Filter (Dynamic + Editable) */}
             <div className='space-y-2'>
               <label className='text-sm font-medium'>
                 Price Range: ${filters.priceRange[0]} - ${filters.priceRange[1]}
               </label>
+
+              {/* Editable min & max fields */}
+              <div className='flex items-center space-x-3'>
+                <input
+                  type='number'
+                  min={0}
+                  max={filters.priceRange[1]}
+                  value={filters.priceRange[0]}
+                  onChange={e => {
+                    const newMin = Math.min(
+                      Number(e.target.value),
+                      filters.priceRange[1]
+                    );
+                    handleFilterChange('priceRange', [
+                      newMin,
+                      filters.priceRange[1],
+                    ]);
+                  }}
+                  className='bg-background w-20 rounded border border-gray-300 px-2 py-1 text-sm'
+                />
+                <span>-</span>
+                <input
+                  type='number'
+                  min={filters.priceRange[0]}
+                  max={maxPrice}
+                  value={filters.priceRange[1]}
+                  onChange={e => {
+                    const newMax = Math.max(
+                      Number(e.target.value),
+                      filters.priceRange[0]
+                    );
+                    handleFilterChange('priceRange', [
+                      filters.priceRange[0],
+                      newMax,
+                    ]);
+                  }}
+                  className='bg-background w-20 rounded border border-gray-300 px-2 py-1 text-sm'
+                />
+              </div>
+
+              {/* Slider */}
               <Slider
                 value={filters.priceRange}
                 onValueChange={value =>
