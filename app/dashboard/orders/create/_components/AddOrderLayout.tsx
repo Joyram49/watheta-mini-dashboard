@@ -8,7 +8,7 @@ type Props = {
   readonly children: React.ReactNode;
 };
 
-const AddProductLayout = ({ children }: Props) => {
+const AddOrderLayout = ({ children }: Props) => {
   return (
     <AddOrderProvider>
       <AddOrderNav />
@@ -19,4 +19,4 @@ const AddProductLayout = ({ children }: Props) => {
   );
 };
 
-export default AddProductLayout;
+export default AddOrderLayout;

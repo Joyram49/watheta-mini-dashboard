@@ -14,16 +14,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -68,7 +60,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className='w-full'>
-      <div className='flex items-center gap-x-4 py-4'>
+      {/* <div className='flex items-center gap-x-4 py-4'>
         <Input
           placeholder='Filter products...'
           value={
@@ -103,7 +95,9 @@ export function DataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+      </div> */}
+
+      {/* table */}
       <div className='rounded-md border'>
         <Table>
           <TableHeader>

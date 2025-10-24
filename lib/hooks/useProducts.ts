@@ -37,7 +37,7 @@ export const useCreateProduct = () => {
       });
 
       // Navigate to products page
-      router.push('/dashboard/products');
+      router.push('/dashboard/orders');
     },
     onError: (error: Error) => {
       // Show error toast

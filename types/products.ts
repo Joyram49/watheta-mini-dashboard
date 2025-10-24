@@ -25,7 +25,7 @@ export type CreateProductFormData = z.infer<typeof createProductSchema>;
 // Product type based on data structure
 export interface Product {
   id: string;
-  createdAt: string;
+  createdAt: number;
   product_name: string;
   product_sku: string;
   product_category: string;

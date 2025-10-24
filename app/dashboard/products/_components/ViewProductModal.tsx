@@ -218,7 +218,7 @@ export function ViewProductModal({
                   Created:
                 </span>
                 <span className='font-medium'>
-                  {formatDate(Number(product.createdAt))}
+                  {formatDate(product.createdAt)}
                 </span>
               </div>
               <div className='flex items-center gap-2'>

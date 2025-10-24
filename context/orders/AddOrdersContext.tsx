@@ -5,7 +5,7 @@ import React, { createContext, useContext } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { useCreateProduct } from '@/lib/hooks/useProducts';
+import { useCreateOrder } from '@/lib/hooks/useOrders';
 import { CreateOrderFormData, createOrderSchema } from '@/types/orders';
 
 interface AddOrderContextType {
@@ -34,14 +34,14 @@ interface AddOrderProviderProps {
 export const AddOrderProvider: React.FC<AddOrderProviderProps> = ({
   children,
 }) => {
-  const createOrderMutation = useCreateProduct();
+  const createOrderMutation = useCreateOrder();
 
   const methods = useForm<CreateOrderFormData>({
     resolver: zodResolver(createOrderSchema),
     defaultValues: {
       client_name: '',
       products: [],
-      quantity: 2,
+      quantity: 1,
       delivery_address: '',
       expected_delivery_date: '',
       payment_status: 'pending',
