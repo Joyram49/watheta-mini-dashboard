@@ -1,8 +1,6 @@
 'use client';
 
-import * as React from 'react';
-
-import { Bell, Search, Settings, Menu } from 'lucide-react';
+import { Bell, Menu, Settings } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 
 interface TopNavbarProps {
   onMenuClick?: () => void;
@@ -27,7 +24,7 @@ export function TopNavbar({
   showMenuButton = false,
 }: TopNavbarProps) {
   return (
-    <div className='border-border bg-background sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-2 border-b px-3 shadow-sm sm:gap-x-4 sm:px-4 lg:gap-x-6 lg:px-8'>
+    <div className='border-border bg-background sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-2 border-b px-6 shadow-sm sm:gap-x-4 lg:gap-x-6'>
       {/* Mobile menu button */}
       {showMenuButton && onMenuClick && (
         <Button
@@ -41,9 +38,9 @@ export function TopNavbar({
         </Button>
       )}
 
-      <div className='flex flex-1 gap-x-2 self-stretch sm:gap-x-4 lg:gap-x-6'>
+      <div className='flex flex-1 justify-end gap-x-2 self-stretch sm:gap-x-4 lg:gap-x-6'>
         {/* Search bar */}
-        <div className='flex flex-1'>
+        {/* <div className='flex flex-1'>
           <div className='relative w-full max-w-sm sm:max-w-md lg:max-w-lg'>
             <Search className='text-muted-foreground absolute top-[35%] left-3 h-4 w-4 -translate-y-1/2' />
             <Input
@@ -51,7 +48,7 @@ export function TopNavbar({
               className='bg-muted/50 border-muted-foreground/20 focus:bg-background pl-10 text-sm transition-colors'
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Right side items */}
         <div className='flex items-center gap-x-2 sm:gap-x-4 lg:gap-x-6'>

@@ -1,6 +1,7 @@
-import React from 'react';
+'use client';
 
-import { Package, Plus, Search, Filter, MoreHorizontal } from 'lucide-react';
+import { Filter, MoreHorizontal, Package, Plus, Search } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { PageHeader } from '@/components/ui/page-header';
 
 export default function ProductsPage() {
+  const router = useRouter();
   // Mock data for demonstration
   const stats = [
     {
@@ -114,7 +116,7 @@ export default function ProductsPage() {
         title='Products'
         description='Manage your product inventory and catalog'
       >
-        <Button>
+        <Button onClick={() => router.push('/dashboard/products/create')}>
           <Plus className='mr-2 h-4 w-4' />
           Add Product
         </Button>
