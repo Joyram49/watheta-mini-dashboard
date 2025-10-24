@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { NextResponse } from 'next/server';
 
 cloudinary.config({
@@ -8,7 +8,7 @@ cloudinary.config({
   secure: true,
 });
 
-export async function POST(request) {
+export async function POST(request: Request): Promise<NextResponse> {
   try {
     const formData = await request.formData();
     const file = formData.get('file');
@@ -23,20 +23,23 @@ export async function POST(request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const uploadResult = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        {
-          folder: 'rinor-admin',
-          resource_type: 'image',
-          overwrite: true,
-        },
-        (error, result) => {
-          if (error) return reject(error);
-          resolve(result);
-        }
-      );
-      stream.end(buffer);
-    });
+    const uploadResult: UploadApiResponse = await new Promise(
+      (resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'rinor-admin',
+            resource_type: 'image',
+            overwrite: true,
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            if (!result) return reject(new Error('No result from Cloudinary'));
+            resolve(result);
+          }
+        );
+        stream.end(buffer);
+      }
+    );
 
     return NextResponse.json({
       success: true,
@@ -46,9 +49,11 @@ export async function POST(request) {
       height: uploadResult.height,
       format: uploadResult.format,
     });
-  } catch (error) {
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { success: false, message: 'Upload failed', error: error.message },
+      { success: false, message: 'Upload failed', error: message },
       { status: 500 }
     );
   }

@@ -57,7 +57,7 @@ export function EditProductModal({
       description: '',
       price: 0,
       stock: 0,
-      status: 'active' as const,
+      status: 'active' as 'active' | 'inactive' | 'draft',
       image: '',
     },
   });

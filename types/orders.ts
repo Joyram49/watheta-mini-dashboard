@@ -1,38 +1,19 @@
 import { z } from 'zod';
 
-export const createOrderSchema = z.object({
-  // Client Info
-  client_name: z.string().trim().min(1, 'Client name is required'),
+import { Product } from './products';
 
-  // Product Info
+export const createOrderSchema = z.object({
+  client_name: z.string().trim().min(1, 'Client name is required'),
   products: z
     .array(z.string().min(1, 'Product ID is required'))
     .nonempty('At least one product must be selected'),
-  quantity: z.coerce
-    .number({ invalid_type_error: 'Quantity is required' })
-    .min(1, 'Quantity must be at least 1'),
-
-  // Delivery Info
+  quantity: z.coerce.number().min(1, 'Quantity must be at least 1'),
   delivery_address: z.string().trim().min(1, 'Delivery address is required'),
-  expected_delivery_date: z.coerce
-    .date({
-      invalid_type_error: 'Expected delivery date is required',
-    })
-    .refine(date => date >= new Date(), {
-      message: 'Expected delivery date cannot be in the past',
-    }),
-
-  // Statuses
-  payment_status: z.enum(['paid', 'pending', 'refunded']).default('pending'),
-  delivery_status: z
-    .enum(['pending', 'shipped', 'delivered', 'canceled'])
-    .default('pending'),
-
-  // System Info
-  order_id: z.string().default(() => `ORD-${Date.now()}`), // auto-generated
-  created_at: z.coerce.date().default(() => new Date()),
+  expected_delivery_date: z.string(),
+  payment_status: z.enum(['paid', 'pending', 'refunded']),
+  delivery_status: z.enum(['pending', 'shipped', 'delivered', 'cancelled']),
+  order_id: z.string(),
 });
-
 export type CreateOrderFormData = z.infer<typeof createOrderSchema>;
 
 export const updateOrderSchema = createOrderSchema
@@ -51,7 +32,7 @@ export type UpdateOrderFormData = z.infer<typeof updateOrderSchema>;
 export interface Order {
   order_id: string;
   client_name: string;
-  products: Product[]; // 👈 You can directly use the Product type here
+  products: Product[];
   quantity: number;
   delivery_address: string;
   payment_status: 'paid' | 'pending' | 'refunded';

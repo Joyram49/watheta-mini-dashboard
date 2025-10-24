@@ -16,12 +16,14 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 
+type Filters = {
+  category: string;
+  status: string;
+  priceRange: [number, number];
+};
+
 interface ProductsFiltersProps {
-  onFiltersChange: (filters: {
-    category: string;
-    status: string;
-    priceRange: [number, number];
-  }) => void;
+  onFiltersChange: (filters: Filters) => void;
   categories: string[];
   statuses: string[];
   maxPrice: number;
@@ -33,21 +35,24 @@ export function ProductsFilters({
   statuses,
   maxPrice,
 }: ProductsFiltersProps) {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     category: '',
     status: '',
-    priceRange: [0, maxPrice] as [number, number],
+    priceRange: [0, maxPrice],
   });
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = <K extends keyof Filters>(
+    key: K,
+    value: Filters[K] | string
+  ) => {
     const newFilters = {
       ...filters,
       [key]: value === 'all' ? '' : value,
     };
-    setFilters(newFilters);
-    onFiltersChange(newFilters);
+    setFilters(newFilters as Filters);
+    onFiltersChange(newFilters as Filters);
   };
 
   const clearFilters = () => {
@@ -151,7 +156,9 @@ export function ProductsFilters({
               </label>
               <Slider
                 value={filters.priceRange}
-                onValueChange={value => handleFilterChange('priceRange', value)}
+                onValueChange={value =>
+                  handleFilterChange('priceRange', value as [number, number])
+                }
                 max={maxPrice}
                 min={0}
                 step={1}

@@ -39,21 +39,19 @@ export const AddOrderProvider: React.FC<AddOrderProviderProps> = ({
   const methods = useForm<CreateOrderFormData>({
     resolver: zodResolver(createOrderSchema),
     defaultValues: {
-      product_name: '',
-      product_sku: '',
-      product_category: '',
-      description: '',
-      price: 0,
-      stock: 0,
-      status: 'active',
-      image: '',
+      client_name: '',
+      products: [],
+      quantity: 2,
+      delivery_address: '',
+      expected_delivery_date: '',
+      payment_status: 'pending',
+      delivery_status: 'pending',
+      order_id: '',
     },
   });
-
   const handleSubmit = (data: CreateOrderFormData) => {
     createOrderMutation.mutate(data);
   };
-
   return (
     <AddOrderContext.Provider
       value={{

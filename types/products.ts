@@ -14,7 +14,7 @@ export const createProductSchema = z.object({
   // Inventory
   price: z.number().min(0, 'Price must be positive'),
   stock: z.number().min(0, 'Stock must be non-negative'),
-  status: z.enum(['active', 'inactive', 'draft']).default('active'),
+  status: z.enum(['active', 'inactive', 'draft']),
 
   // Media
   image: z.string().url('Must be a valid URL').optional(),
@@ -25,7 +25,7 @@ export type CreateProductFormData = z.infer<typeof createProductSchema>;
 // Product type based on data structure
 export interface Product {
   id: string;
-  createdAt: number;
+  createdAt: string;
   product_name: string;
   product_sku: string;
   product_category: string;

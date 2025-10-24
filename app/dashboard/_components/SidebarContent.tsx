@@ -1,16 +1,15 @@
 'use client';
 
-import React from 'react';
-
 import {
+  ChevronDown,
+  LogOut,
   Package2,
+  Settings,
   ShoppingCart,
   User,
-  Settings,
-  LogOut,
-  ChevronDown,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -41,11 +40,15 @@ interface SidebarContentProps {
 }
 
 function SidebarContent({ pathname, onLinkClick }: SidebarContentProps) {
+  const router = useRouter();
   return (
     <div className='flex h-full flex-col'>
       {/* Logo */}
       <div className='border-sidebar-border flex h-16 shrink-0 items-center border-b px-6'>
-        <div className='flex items-center space-x-3'>
+        <div
+          className='flex cursor-pointer items-center space-x-3'
+          onClick={() => router.push('/')}
+        >
           <div className='bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg'>
             <Package2 className='h-5 w-5' />
           </div>

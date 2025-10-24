@@ -21,7 +21,6 @@ type Props = {
   tabsClassName?: string;
   isLoading?: boolean;
   isNextSubmitBtnLoading?: boolean;
-  c;
   isImageUploading?: boolean;
   submitButtonName?: string;
   footerText?: string;
