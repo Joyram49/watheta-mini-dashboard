@@ -1,6 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
 import { Edit, Eye, MoreHorizontal, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -132,9 +133,9 @@ export function OrdersDataTable({
       accessorKey: 'created_at',
       header: 'Created At',
       cell: ({ row }) => {
-        const date = new Date(row.getValue('created_at') as string);
-        const formatted =
-          date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        const timestamp = row.getValue('created_at') as number;
+        const date = new Date(timestamp * 1000);
+        const formatted = format(date, 'dd MMM, yyyy');
         return <span>{formatted}</span>;
       },
     },

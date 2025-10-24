@@ -46,7 +46,7 @@ export const AddOrderProvider: React.FC<AddOrderProviderProps> = ({
       expected_delivery_date: '',
       payment_status: 'pending',
       delivery_status: 'pending',
-      order_id: '',
+      order_id: `ORD-44`,
     },
   });
   const handleSubmit = (data: CreateOrderFormData) => {

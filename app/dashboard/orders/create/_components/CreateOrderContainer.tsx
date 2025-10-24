@@ -58,8 +58,8 @@ export default function CreateOrderContainer() {
       const orderData = {
         ...formData,
         order_id: `ORD-${Date.now()}`,
+        created_at: new Date().toISOString(),
       };
-
       handleSubmit(orderData);
     } catch {
       toast.error('Failed to validate form. Please try again.');

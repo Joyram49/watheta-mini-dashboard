@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useDeleteOrder, useOrders } from '@/lib/hooks/useOrders';
+import { useOrders } from '@/lib/hooks/useOrders';
 import { Order, TDeliveryStatus } from '@/types/orders';
 
 import { DeleteOrderModal } from './_components/DeleteOrderModal';
@@ -18,7 +18,6 @@ import { ViewOrderModal } from './_components/ViewOrderModal';
 export default function OrdersPage() {
   const router = useRouter();
   const { data: orders = [], isLoading, error } = useOrders();
-  const deleteOrderMutation = useDeleteOrder();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -31,7 +30,7 @@ export default function OrdersPage() {
     o => o.delivery_status === ('pending' as TDeliveryStatus)
   ).length;
   const completedOrders = orders.filter(
-    o => o.delivery_status === ('completed' as TDeliveryStatus)
+    o => o.delivery_status === ('delivered' as TDeliveryStatus)
   ).length;
   const cancelledOrders = orders.filter(
     o => o.delivery_status === ('cancelled' as TDeliveryStatus)

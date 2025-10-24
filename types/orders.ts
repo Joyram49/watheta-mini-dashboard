@@ -17,10 +17,8 @@ export const createOrderSchema = z.object({
     .min(1, 'Expected delivery date is required'),
   // Statuses
   payment_status: z.enum(['paid', 'pending', 'refunded']),
-  delivery_status: z.enum(['pending', 'shipped', 'delivered', 'canceled']),
-
-  // System Info
-  order_id: z.string().min(1, 'OrderId is required'),
+  delivery_status: z.enum(['pending', 'shipped', 'delivered', 'cancelled']),
+  order_id: z.string(),
 });
 
 export type CreateOrderFormData = z.infer<typeof createOrderSchema>;
@@ -38,14 +36,14 @@ export const updateOrderSchema = createOrderSchema
 export type UpdateOrderFormData = z.infer<typeof updateOrderSchema>;
 
 export type TPaymentStatus = 'paid' | 'pending' | 'refunded';
-export type TDeliveryStatus = 'pending' | 'shipped' | 'delivered' | 'canceled';
+export type TDeliveryStatus = 'pending' | 'shipped' | 'delivered' | 'cancelled';
 
 // Product type based on data structure
 export interface Order {
   id: string;
   order_id: string;
   client_name: string;
-  products: string;
+  products: string[];
   quantity: number;
   payment_status: TPaymentStatus;
   delivery_status: TDeliveryStatus;

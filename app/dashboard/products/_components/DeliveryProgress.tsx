@@ -8,7 +8,7 @@ const DeliveryProgress = ({ productId }: { productId: string }) => {
   }
 
   // Generate a consistent delivery status based on product ID hash
-  const statuses = ['pending', 'processing', 'shipped', 'delivered'];
+  const statuses = ['pending', 'shipped', 'delivered', 'cancelled'];
   const hash = productId.split('').reduce((a, b) => {
     a = (a << 5) - a + b.charCodeAt(0);
     return a & a;
@@ -19,8 +19,8 @@ const DeliveryProgress = ({ productId }: { productId: string }) => {
     switch (status) {
       case 'pending':
         return 'text-yellow-600';
-      case 'processing':
-        return 'text-blue-600';
+      case 'cancelled':
+        return 'text-red-600';
       case 'shipped':
         return 'text-purple-600';
       case 'delivered':
