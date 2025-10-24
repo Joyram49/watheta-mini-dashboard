@@ -2,6 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { Edit, Eye, MoreHorizontal, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Order } from '@/types/orders';
 
+import { copyToClipboard } from '../../../../lib/utils/clipboard';
 import DeliveryProgress from '../../products/_components/DeliveryProgress';
 
 import CustomerFeedback from './CustomerFeedback';
@@ -115,8 +117,8 @@ export function OrdersDataTable({
       accessorKey: 'delivery_progress',
       header: 'Delivery Graph',
       cell: ({ row }) => {
-        const value = row.getValue('order_id');
-        return <DeliveryProgress productId={value} className='w-[100px]' />;
+        const value = row.original.order_id;
+        return <DeliveryProgress productId={value} />;
       },
     },
     {
@@ -131,7 +133,9 @@ export function OrdersDataTable({
       header: 'Created At',
       cell: ({ row }) => {
         const date = new Date(row.getValue('created_at') as string);
-        return <span>{new Date(date)}</span>;
+        const formatted =
+          date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        return <span>{formatted}</span>;
       },
     },
     {

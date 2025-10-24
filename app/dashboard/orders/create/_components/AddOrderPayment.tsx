@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAddOrderForm } from '@/context/orders/AddOrdersContext';
+import { TDeliveryStatus, TPaymentStatus } from '@/types/orders';
 
 export default function AddOrderPayment() {
   const { methods } = useAddOrderForm();
@@ -35,7 +36,9 @@ export default function AddOrderPayment() {
         <Label>Payment Status</Label>
         <Select
           value={payment_status}
-          onValueChange={value => setValue('payment_status', value)}
+          onValueChange={value =>
+            setValue('payment_status', value as TPaymentStatus)
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder='Select payment status' />
@@ -58,7 +61,9 @@ export default function AddOrderPayment() {
         <Label>Delivery Status</Label>
         <Select
           value={delivery_status}
-          onValueChange={value => setValue('delivery_status', value)}
+          onValueChange={value =>
+            setValue('delivery_status', value as TDeliveryStatus)
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder='Select delivery status' />

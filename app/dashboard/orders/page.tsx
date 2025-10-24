@@ -9,7 +9,7 @@ import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDeleteOrder, useOrders } from '@/lib/hooks/useOrders';
-import { Order } from '@/types/orders';
+import { Order, TDeliveryStatus } from '@/types/orders';
 
 import { DeleteOrderModal } from './_components/DeleteOrderModal';
 import { OrdersDataTable } from './_components/OrdersDataTable';
@@ -27,9 +27,15 @@ export default function OrdersPage() {
 
   // === STATS ===
   const totalOrders = orders.length;
-  const pendingOrders = orders.filter(o => o.status === 'pending').length;
-  const completedOrders = orders.filter(o => o.status === 'completed').length;
-  const cancelledOrders = orders.filter(o => o.status === 'cancelled').length;
+  const pendingOrders = orders.filter(
+    o => o.delivery_status === ('pending' as TDeliveryStatus)
+  ).length;
+  const completedOrders = orders.filter(
+    o => o.delivery_status === ('completed' as TDeliveryStatus)
+  ).length;
+  const cancelledOrders = orders.filter(
+    o => o.delivery_status === ('cancelled' as TDeliveryStatus)
+  ).length;
 
   // === HANDLERS ===
   const handleViewOrder = (order: Order) => {
@@ -50,12 +56,6 @@ export default function OrdersPage() {
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setSelectedOrder(null);
-  };
-
-  const confirmDeleteOrder = async () => {
-    if (!selectedOrder) return;
-    await deleteOrderMutation.mutateAsync(selectedOrder.id);
-    setIsDeleteModalOpen(false);
   };
 
   // === ERROR ===
@@ -185,7 +185,6 @@ export default function OrdersPage() {
       <DeleteOrderModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
-        onConfirm={confirmDeleteOrder}
         order={selectedOrder}
       />
 

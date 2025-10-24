@@ -38,7 +38,7 @@ export function DeleteOrderModal({
   };
 
   const handleClose = () => {
-    if (!deleteOrderMutation.isLoading) {
+    if (!deleteOrderMutation.isPending) {
       onClose();
     }
   };
@@ -93,7 +93,7 @@ export function DeleteOrderModal({
             type='button'
             variant='outline'
             onClick={handleClose}
-            disabled={deleteOrderMutation.isLoading}
+            disabled={deleteOrderMutation.isPending}
           >
             Cancel
           </Button>
@@ -101,10 +101,10 @@ export function DeleteOrderModal({
             type='button'
             variant='destructive'
             onClick={handleDelete}
-            disabled={deleteOrderMutation.isLoading}
+            disabled={deleteOrderMutation.isPending}
             className='gap-2'
           >
-            {deleteOrderMutation.isLoading ? (
+            {deleteOrderMutation.isPending ? (
               <>
                 <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
                 Deleting...

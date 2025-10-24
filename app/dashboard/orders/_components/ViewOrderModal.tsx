@@ -1,5 +1,6 @@
 'use client';
 
+import { format } from 'date-fns';
 import { Calendar, DollarSign, Eye, Hash, Package } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
@@ -27,16 +28,6 @@ export function ViewOrderModal({
   orderId,
 }: ViewOrderModalProps) {
   const { data: order, isLoading, error } = useGetOrderById(orderId);
-
-  const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -135,10 +126,7 @@ export function ViewOrderModal({
                 </div>
                 <div className='flex gap-2'>
                   <span className='font-semibold'>Delivery Progress:</span>
-                  <DeliveryProgress
-                    productId={order?.order_id}
-                    className='w-32'
-                  />
+                  <DeliveryProgress productId={order?.order_id} />
                 </div>
               </div>
             </div>
@@ -155,7 +143,7 @@ export function ViewOrderModal({
               <Calendar className='h-4 w-4 text-gray-500' />
               <span>Created:</span>
               <span className='font-medium'>
-                {formatDate(order.created_at)}
+                {format(order.created_at, 'dd MMM, yyyy')}
               </span>
             </div>
             <div className='flex items-center gap-2'>
